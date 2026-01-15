@@ -48,27 +48,23 @@
   <script>
     const resultElement = document.getElementById('result');
 
-    function onScanSuccess(decodedText, decodedResult) {
+    function onScanSuccess(decodedText) {
       resultElement.innerHTML = `<strong>Scanned Code:</strong><br>${decodedText}`;
-    }
-
-    function onScanFailure(error) {
-      // ignore scan errors
     }
 
     const html5QrCode = new Html5Qrcode("reader");
 
-    Html5Qrcode.getCameras().then(cameras => {
-      if (cameras && cameras.length) {
-        html5QrCode.start(
-          cameras[0].id,
-          { fps: 10, qrbox: { width: 250, height: 150 } },
-          onScanSuccess,
-          onScanFailure
-        );
-      }
-    }).catch(err => {
-      resultElement.innerText = "Camera access error";
+    // FORCE BACK CAMERA (iPhone & Android)
+    html5QrCode.start(
+      { facingMode: { exact: "environment" } },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 150 }
+      },
+      onScanSuccess
+    ).catch(err => {
+      resultElement.innerText = "Back camera not available";
+      console.error(err);
     });
   </script>
 </body>
